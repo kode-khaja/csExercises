@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>
+            odin.Practice(file)
+        </title>
+    
+       <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+        <style>
+        </style>
+    </head>
+    <body>
+ 
+    </body>
+    <script>
+
+
+    class hashMap {
+    constructor(size=13) {
+      this.keyMap = new Array(size)
+    }
+
+
+    _resize(newSize) {
+        let oldKeyMap = this.keyMap;
+        this.keyMap = new Array(newSize);
+      
+        for (let i = 0; i < oldKeyMap.length; i++) {
+          if (oldKeyMap[i]) {
+            for (let j = 0; j < oldKeyMap[i].length; j++) {
+              let [key, value] = oldKeyMap[i][j];
+              this.set(key, value);
+            }
+          }
+        }
+      }      
+
+      loadFactor() {
+    let numPairs = this.length(); 
+    let size = this.keyMap.length; 
+    return numPairs / size;
+     }
+
+  
+     _hash(key) {
+        let total = 0
+        let primeNumber = 31
+        for (let i = 0; i < Math.min(key.length, 100); i++) {
+          let char = key[i]
+          let value = char.charCodeAt(0) - 96
+          total = (total * primeNumber + value) % this.keyMap.length
+        }
+        return total
+     }
+  
+     set(key, value) {
+
+
+        let index = this._hash(key)
+        if (!this.keyMap[index]) {
+          this.keyMap[index] = []
+        } 
+        for (let i = 0; i < this.keyMap[index].length; i++) {
+          if (key === this.keyMap[index][i][0]) {
+          this.keyMap[index][i][1] = value
+          return
+      }
+    }
+        this.keyMap[index].push([key, value])
+        // return this.keyMap
+        if (this.loadFactor() > 0.75) {
+        this._resize(this.keyMap.length * 2)
+    }
+    }
+
+  
+     has(key) { 
+      let index = this._hash(key)
+      for (let i = 0; i < this.keyMap[index].length; i++) {
+      if (key === this.keyMap[index][i][0]) {
+        return true
+      }
+      }
+      return false
+     }
+  
+     remove(key) {
+      let index = this._hash(key) 
+      for (let i = 0; i < this.keyMap[index].length; i++) {
+      if (key === this.keyMap[index][i][0]) {
+        if (this.keyMap[index].length === 1) {
+          this.keyMap[index] = []
+          return true
+        } 
+         this.keyMap[index].splice(i, 1)
+        return true 
+      }
+     } return false
+    }
+  
+    length() {
+      let counter = 0
+      for (let i = 0; i < this.keyMap.length; i++) {
+        if(this.keyMap[i] !== undefined) {
+        for (let j = 0; j < this.keyMap[i].length; j++) {
+            counter++
+        }
+      }
+    }
+      return counter
+    }
+  
+    clear() {
+      this.keyMap = []
+  }
+  
+   keys() {
+   
+    let keysArr = []
+  
+      for (let i = 0; i < this.keyMap.length; i++) {
+      if (this.keyMap[i]) {
+      for (let j = 0; j < this.keyMap[i].length; j++) {
+        if (!keysArr.includes(this.keyMap[i][j][0]))
+          keysArr.push(this.keyMap[i][j][0])
+      }
+      }
+    } return keysArr
+   }
+  
+   values() {
+   
+   let valuesArr = []
+  
+     for (let i = 0; i < this.keyMap.length; i++) {
+     if (this.keyMap[i]) {
+     for (let j = 0; j < this.keyMap[i].length; j++) {
+       if (!valuesArr.includes(this.keyMap[i][j][1]))
+         valuesArr.push(this.keyMap[i][j][1])
+     }
+     }
+   } return valuesArr
+  }
+  
+  entries() {
+   
+   let pairsArr = []
+  
+     for (let i = 0; i < this.keyMap.length; i++) {
+     if (this.keyMap[i]) {
+     for (let j = 0; j < this.keyMap[i].length; j++) {
+       if (!pairsArr.includes(this.keyMap[i][j]))
+         pairsArr.push(this.keyMap[i][j])
+     }
+     }
+   } return pairsArr
+  }
+  
+  
+  
+  }
+
+
+
+
+  const test = new hashMap() 
+
+
+  test.set('apple', 'red')
+  test.set('banana', 'yellow')
+  test.set('happy', 'orangpinke')
+  test.set('dog', 'brown')
+  test.set('elephant', 'gray')
+  test.set('frog', 'green')
+  test.set('grape', 'purple')
+  test.set('fattgrg', 'rtg')
+  test.set('ice cream', 'white')
+  test.set('gggrg', 'greeny')
+  test.set('kite', 'grt')
+  test.set('liofvfvn', 'golden')
+  test.set('moon', 'silver')
+  test.set('fgsf', 'fdvdf')
+
+
+
+  test.clear()
+  
+
+
+  console.log(test.length())
+  console.log(test.loadFactor())
+  console.log(test.keyMap.length)
+  console.log(test.loadFactor())
+
+
+
+
+
+    </script>
