@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>
+          odin.Practice(binarySearchTrees)
+        </title>
+    
+       <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+        <style>
+        </style>
+    </head>
+    <body>
+ 
+    </body>
+    <script>
+
+class NodeBST {
+  constructor (value) {
+    this.value = value
+    this.right = null
+    this.left = null
+  }
+}
+
+
+class BST {
+  constructor(array) {
+    this.root = this.buildTree(array)
+    this.length = 0
+  }
+
+  buildTree(arr) {
+    let bstArray = [...new Set(arr)]
+    let sortedArray = bstArray.sort((a, b) => a - b)
+    if (sortedArray.length === 0) return null
+
+    let arrSplit = Math.floor(sortedArray.length / 2)
+
+    let root = sortedArray[arrSplit]
+    let leftHalf = sortedArray.slice(0, arrSplit)
+    let rightHalf = sortedArray.slice(arrSplit + 1)
+
+
+    let bstRoot = new NodeBST(root)
+
+    if (!bstRoot) return null
+    let leftSubtree = this.buildTree(leftHalf)
+    let rightSubtree = this.buildTree(rightHalf)
+    bstRoot.left = leftSubtree
+    bstRoot.right = rightSubtree
+
+    return bstRoot
+  }
+
+
+
+  prettyPrint(node = this.root, prefix = "", isLeft = true) {
+  if (node.right !== null) {
+    this.prettyPrint(node.right, `${prefix}${isLeft ? "│   " : "    "}`, false);
+  }
+
+  console.log(`${prefix}${isLeft ? "└── " : "┌── "}${node.value}`);
+
+  if (node.left !== null) {
+    this.prettyPrint(node.left, `${prefix}${isLeft ? "    " : "│   "}`, true);
+  }
+}
+
+  insert(val) {
+    let node = new NodeBST(val)
+    
+    if (!this.root) {
+      this.root = node
+      return this
+    }
+    
+    let current = this.root
+
+    while (true) {
+      if (node.value === current.value) return undefined
+    if (node.value > current.value) {
+        if (current.right) {
+            current = current.right
+        } else {
+          current.right = node
+          return this
+
+        }
+ 
+    } 
+
+    if (node.value < current.value) {
+        if (current.left) {
+            current = current.left
+        } else {
+          current.left = node
+          return this
+
+        }
+
+    }
+  }
+}
+
+
+find(val) {
+  if (!this.root) {
+    return undefined
+  }
+  let found = false
+  let current = this.root
+
+  while(current) {
+    if (val > current.value) {
+      current = current.right
+    } 
+    if (val < current.value) {
+      current = current.left
+    }
+    if (val === current.value) {
+      found = true
+      return current
+    }
+  }
+  return undefined
+}
+
+delete(val) {
+
+  let nodeToRemove = this.find(val)
+
+  if (!nodeToRemove) return undefined
+
+
+  let current = this.root
+  let parent = null
+
+
+  let parentOfNextBiggest = null
+
+  while (current) {
+    if (nodeToRemove.value > current.value) {
+      parent = current
+      current = current.right
+    } else if (nodeToRemove.value < current.value) {
+      parent = current
+      current = current.left
+    } else {
+
+      if (!current.right && !current.left) {
+       if (!parent && current) {
+        this.root = null
+        return this
+       }
+        if (parent.left === current) {
+          parent.left = null
+        } else {
+        parent.right = null
+        }
+        return parent
+      }
+
+
+
+      else if (!current.right && current.left) {
+        if (parent.right === current) {
+        parent.right = current.left
+      } else if (parent.left === current) {
+        parent.left = current.left
+      } return current
+      } else if (!current.left && current.right) {
+        if (parent.right === current) {
+        parent.right = current.right
+      } else if (parent.left === current) {
+        parent.left = current.right
+      } return current
+
+      } else {
+        if (parent.right === current) {
+          if (current.right && current.left) {
+            let ogCurrent = current
+            current = current.right
+            if (!current.left) {
+              parent.right = current
+              return this
+            }
+            let nextBiggest = current.left
+            while(nextBiggest.left !== null) {
+              parentOfNextBiggest = nextBiggest
+              nextBiggest = nextBiggest.left
+            } parent.right = nextBiggest
+            nextBiggest.right = ogCurrent.right
+            nextBiggest.left = ogCurrent.left
+            parentOfNextBiggest.left = null
+            return nextBiggest
+          }
+        } else if (parent.left === current) {
+          if (current.right && current.left) {
+            let ogCurrent = current
+            current = current.right
+            if (!current.left) {
+              parent.left = current
+              return this
+            }
+            let nextBiggest = current.left
+            while(nextBiggest.left !== null) {
+              parentOfNextBiggest = nextBiggest
+              nextBiggest = nextBiggest.left
+            } parent.left = nextBiggest
+            nextBiggest.right = ogCurrent.right
+            nextBiggest.left = ogCurrent.left
+            parentOfNextBiggest.left = null
+            return nextBiggest
+          }
+        }
+      }
+    }
+  }
+}
+treeDepth(node) {
+  
+  if (!node) return -1
+
+  function getDepth(currentNode, targetNode) {
+  
+    if (!currentNode) return -1
+  
+    if (currentNode === targetNode) return 0
+  
+    let leftTree = getDepth(currentNode.left, targetNode)
+    if (leftTree !== -1) return leftTree + 1
+  
+    let rightTree = getDepth(currentNode.right, targetNode)
+    if (rightTree !== -1) return rightTree + 1
+  
+    return -1
+  }
+
+  let depth = getDepth(this.root, node)
+  return depth
+
+}
+
+
+
+_getHeight(node) {
+  if (node === null) return -1
+
+  let leftHeight = this._getHeight(node.left)
+  let rightHeight = this._getHeight(node.right)
+  
+
+  return 1 + Math.max(leftHeight, rightHeight)
+
+}
+
+treeHeight(node) {
+
+node = this.find(node)
+
+if (!node) {
+  return -1
+}
+
+let height = this._getHeight(node)
+return height
+}
+
+
+isBalanced() {
+  if (!this.root) return true
+
+ const _helperIsBalanced = (node) => {
+    if (!node) return true
+  
+  let leftHeight = this._getHeight(node.left)
+  let rightHeight = this._getHeight(node.right)
+  
+  if (Math.abs(leftHeight - rightHeight) > 1) {
+    return false
+  } 
+  
+  let leftBalance = _helperIsBalanced(node.left)
+  let rightBalance = _helperIsBalanced(node.right)
+  
+  return leftBalance && rightBalance
+  }
+
+  return _helperIsBalanced(this.root)
+}
+
+reBalance() {
+let visited = []
+
+this.inOrder1((node) => {
+  visited.push(node.value)
+})
+this.root = this.buildTree(visited)
+
+
+}
+
+preOrder() {
+  let visitedNodes = []
+
+  function _preOrderRecursion(node) {
+    if (!node) return 
+    visitedNodes.push(node.value)
+
+   _preOrderRecursion(node.left)
+   _preOrderRecursion(node.right)
+    return visitedNodes
+  }
+  _preOrderRecursion(this.root)
+  return visitedNodes
+}
+
+
+
+preOrder1(callback) {
+  if (typeof callback !== 'function') throw new Error ('Error - Callback Required')
+  
+  function _preOrderRecur(node) {
+    if (!node) return 
+
+    callback(node) 
+
+   _preOrderRecur(node.left)
+   _preOrderRecur(node.right)
+    }
+    _preOrderRecur(this.root)
+}
+
+postOrder() {
+  let visited = []
+
+  function traverse(node) {
+    if (!node) return
+    traverse(node.left)
+    traverse(node.right)
+    visited.push(node.value)
+  }
+  traverse(this.root)
+  return visited
+
+}
+
+postOrder1(callback) {
+  if (typeof callback !== 'function') throw new Error ('Error - Callback Required')
+
+  function _postOrderRecur(node) {
+    if (!node) return 
+    _postOrderRecur(node.left)
+    _postOrderRecur(node.right)
+    callback(node)
+  }
+
+  _postOrderRecur(this.root)
+}
+
+inOrder() {
+  let visited = []
+  function _inOrderRecur(node) {
+    if (!node) return
+    _inOrderRecur(node.left)
+     visited.push(node.value)
+    _inOrderRecur(node.right)
+  }
+  _inOrderRecur(this.root)
+  return visited
+}
+
+inOrder1(callback) {
+  if (typeof callback !== 'function') throw new Error('Error - Callback Required')
+
+  function _inOrderRecur(node) {
+    if (!node) return
+    _inOrderRecur(node.left)
+    callback(node)
+    _inOrderRecur(node.right)
+  }
+
+  _inOrderRecur(this.root)
+}
+
+BFS() {
+  let current = this.root
+  let queue = []
+  let visited = []
+  if(!this.root) return 
+  queue.push(current)
+  while(queue.length) {
+    let node = queue.shift()
+    visited.push(node.value)
+    if (node.left) {
+      queue.push(node.left)
+    }
+    if (node.right) {
+      queue.push(node.right)
+    }
+  }
+  return visited
+}
+
+BFS1(callback) {
+  if (typeof callback !== 'function') throw new Error ('Error - Callback required')
+  
+  let queue = []
+  let current = this.root
+  queue.push(current)
+
+  while(queue.length) {
+    let node = queue.shift()
+    callback(node)
+    if(node.left) {
+      queue.push(node.left)
+    }
+    if (node.right) {
+      queue.push(node.right)
+    }
+  }
+  }
+
+
+}
+
+
+let futureTree = [2, 7, 9,  10, 1, 4]
+
+let bst = new BST(futureTree)
+
+bst.root = bst.buildTree(futureTree)
+
+console.log(bst.root);
+
+console.log(bst.isBalanced());
+
+bst.BFS1((node) => console.log(`Breadth First -`, node.value))
+
+bst.preOrder1((node) => console.log(`PreOrder -`,node.value))
+
+bst.inOrder1((node) => console.log(`inOrder -`,node.value))
+
+bst.postOrder1((node) => console.log(`PostOrder -`,node.value))
+
+
+
+bst.insert(351)
+bst.insert(211)
+bst.insert(900)
+bst.insert(288)
+
+console.log(bst.isBalanced());
+
+bst.reBalance()
+
+console.log(bst.isBalanced());
+
+
+bst.BFS1((node) => console.log(`Breadth First -`, node.value))
+
+bst.preOrder1((node) => console.log(`PreOrder -`,node.value))
+
+bst.inOrder1((node) => console.log(`inOrder -`,node.value))
+
+bst.postOrder1((node) => console.log(`PostOrder -`,node.value))
+
+
+bst.prettyPrint();
+
+
+
+
+
+
+
+
+
+    </script>
+
+</html>
+
+delete() pseudocode
+1. find the value trying to remove n save it
+2. if the nodeToremove is a leaf (with no children) just remove it
+3. if the nTr has a single child, disconnect it but before u do, save the .right/.left 
+into a var so that u could connect its parent to its child
+4. if the nTr is a parent of two, go to its right one step,
+then keep going left until u hit a leaf node, save it into a var, save the .right into a var as well then connect them
+
+
+    removeGPT(value) {
+    if (!this.root) return null;
+
+    let current = this.root;
+    let parentOfOldNode = null;
+
+    // Special case: Removing the root
+    if (value === this.root.value) {
+        if (!this.root.left && !this.root.right) {
+            this.root = null;
+            return;
+        }
+    }
+
+    while (current) {
+        if (value === current.value) {
+            // Case 1: Node has no children (leaf node)
+            if (!current.left && !current.right) {
+                if (parentOfOldNode.left === current) {
+                    parentOfOldNode.left = null;
+                } else {
+                    parentOfOldNode.right = null;
+                }
+                return;
+            }
+
+            // Case 2: Node has only a right child
+            if (!current.left) {
+                if (parentOfOldNode.left === current) {
+                    parentOfOldNode.left = current.right;
+                } else {
+                    parentOfOldNode.right = current.right;
+                }
+                return;
+            }
+
+            // Case 3: Node has only a left child
+            if (!current.right) {
+                if (parentOfOldNode.left === current) {
+                    parentOfOldNode.left = current.left;
+                } else {
+                    parentOfOldNode.right = current.left;
+                }
+                return;
+            }
+
+            // Case 4: Node has two children
+            let findingNextBest = current.right;
+            let parentOfNextBest = current;
+
+            while (findingNextBest.left) {
+                parentOfNextBest = findingNextBest;
+                findingNextBest = findingNextBest.left;
+            }
+
+            current.value = findingNextBest.value;
+
+            if (parentOfNextBest.left === findingNextBest) {
+                parentOfNextBest.left = findingNextBest.right;
+            } else {
+                parentOfNextBest.right = findingNextBest.right;
+            }
+            return;
+        }
+
+        // Move down the tree while keeping track of the parent
+        parentOfOldNode = current;
+        if (value > current.value) {
+            current = current.right;
+        } else {
+            current = current.left;
+        }
+    }
+}
+
+
+  
+
+
+  const tree = new Tree([1, 7, 4, 23, 8, 9, 4, 3, 5, 7, 9, 67, 6345, 324]);
+  console.log(tree.root);
+   
+  tree.remove(8)
+  console.log(tree);
+  
+depth pseudo - 
+if i call the function with the given node i need to start from the root of my tree , and keep going until node === current
+then return it. either way i feel this will have an O(n) complexity, it has to ? or is it better to do it "recursively" or some 
+other pseudo high value coder shit??
+
+recursive logic - 
+ok wtf is the base case... maybe.... if theres no node return -1? if node === rootNode return 0?? 
+and then if it finds it any deeper than these two levels we return 1 + left n right sides or i guess just a var thats Result??
+
+
+
+    </script>
