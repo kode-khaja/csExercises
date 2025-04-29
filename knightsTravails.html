@@ -1,0 +1,226 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Knights Travails</title>
+</head>
+<body>
+    <h1>If you see this, HTML is working</h1>
+</body>
+    <script>
+
+      class Graph {
+        constructor () {
+            this.adjacencyList = {}
+        }
+        adddVertex(vertex) {
+    
+            if (!this.adjacencyList[vertex]) this.adjacencyList[vertex] = []
+          
+        }
+    
+        removeVertex(vertex) {
+            while(this.adjacencyList[vertex].length) {
+               const adjacentValues = this.adjacencyList[vertex].pop()
+                this.removeEdge(vertex, adjacentValues) 
+    
+            }
+            delete this.adjacencyList[vertex]
+        }
+    
+        addEdge(v1, v2) {
+           this.adjacencyList[v1].push(v2)
+           this.adjacencyList[v2].push(v1)
+        }
+        removeEdge(vertex1, vertex2) {
+            this.adjacencyList[vertex1] = this.adjacencyList[vertex1].filter(v => v !== vertex2)
+            this.adjacencyList[vertex2] = this.adjacencyList[vertex2].filter(v => v !== vertex1)
+    
+        }
+    
+        dfsRecursive(node) {
+            let result = []
+            let visitedVertices = {}
+            let adjacencyList = this.adjacencyList
+    
+        (function _dfs(vertex) {
+    
+            if (!vertex) return null
+    
+            visitedVertices[vertex] = true
+            result.push(vertex)
+            
+            adjacencyList[vertex].forEach(neighbor => {
+                if (!visitedVertices[neighbor]) {
+                     _dfs(neighbor)
+                }
+            });
+        })(node)
+       
+        return result
+        }
+    
+        dfsIterative(node) {
+            let result = []
+            let stack = []
+            let visitedVertices = {}
+            let adjacencyList = this.adjacencyList
+            let nextVertex;
+    
+            visitedVertices[node] = true
+            stack.push(node) 
+            while(stack.length) {
+                nextVertex = stack.pop()
+                result.push(nextVertex)
+         
+                    adjacencyList[nextVertex].forEach(neighbor => {
+                        if (!visitedVertices[neighbor]) {
+                            visitedVertices[neighbor] = true
+                            stack.push(neighbor)
+                        }
+                    })
+     
+                }
+    
+                return result
+            }
+    
+    
+        breadthFirst(vertex) {
+            let result = []
+            let queue = []
+            let visitedVertices = {}
+            let nextVertex;
+            
+            visitedVertices[vertex] = true
+            queue.push(vertex)
+    
+            while(queue.length) {
+                nextVertex = queue.shift()
+                result.push(nextVertex)
+    
+                this.adjacencyList[nextVertex].forEach(neighbor => {
+                    if (!visitedVertices[neighbor]) {
+                        visitedVertices[neighbor] = true
+                        queue.push(neighbor)
+                    }
+                })
+            } return result
+        }
+    
+    
+    
+    knightMoves1(start, end) {
+        let queue = [start]
+        let visited = new Set()
+        let result = []
+    
+        let legalMoves = [
+            [1,2], [2,1],
+            [-1, 2], [-2,1],
+            [-1, -2], [-2, -1],
+            [1, -2], [2, -1]
+        ]
+        let parent = new Map()
+        parent.set(`${start[0]},${start[1]}`, null)
+    
+        while (queue.length) {
+            let currentVertex = queue.shift()
+    
+            let currentX = currentVertex[0]
+            let currentY = currentVertex[1]
+    
+            if (currentX === end[0] && currentY === end[1]) {
+                let path = []
+                let currentKey = `${currentX},${currentY}`
+    
+                while(currentKey) {
+                let [x, y] = currentKey.split(',').map(Number)
+                path.unshift([x, y])
+                currentKey = parent.get(currentKey)
+            } return path
+            } 
+    
+            for (let i = 0; i < legalMoves.length; i++) {
+                let newX = currentX + legalMoves[i][0]
+                let newY = currentY + legalMoves[i][1]
+    
+                if (newX < 0 || newX > 7) continue
+                if (newY < 0 || newY > 7) continue
+    
+                let key = `${newX},${newY}`
+    
+                if (!visited.has(key)) {
+                    visited.add(key) 
+                    queue.push([newX, newY])
+                    parent.set(key, `${currentX},${currentY}`)
+                }
+            }
+        }  
+        
+        return result
+    }
+    
+      }
+    
+    //   knights travails function for testing //
+
+      function knightMoves(start, end) {
+        let queue = [start]
+        let visited = new Set()
+        let result = []
+    
+        let legalMoves = [
+            [1,2], [2,1],
+            [-1, 2], [-2,1],
+            [-1, -2], [-2, -1],
+            [1, -2], [2, -1]
+        ]
+        let parent = new Map()
+        parent.set(`${start[0]},${start[1]}`, null)
+    
+        while (queue.length) {
+            let currentVertex = queue.shift()
+    
+            let currentX = currentVertex[0]
+            let currentY = currentVertex[1]
+    
+            if (currentX === end[0] && currentY === end[1]) {
+                let path = []
+                let currentKey = `${currentX},${currentY}`
+    
+                while(currentKey) {
+                let [x, y] = currentKey.split(',').map(Number)
+                path.unshift([x, y])
+                currentKey = parent.get(currentKey)
+            } return path
+            } 
+    
+            for (let i = 0; i < legalMoves.length; i++) {
+                let newX = currentX + legalMoves[i][0]
+                let newY = currentY + legalMoves[i][1]
+    
+                if (newX < 0 || newX > 7) continue
+                if (newY < 0 || newY > 7) continue
+    
+                let key = `${newX},${newY}`
+    
+                if (!visited.has(key)) {
+                    visited.add(key) 
+                    queue.push([newX, newY])
+                    parent.set(key, `${currentX},${currentY}`)
+                }
+            }
+        }  
+        
+        return result
+    }
+        
+      console.log(knightMoves([0, 0], [3, 3]))
+    
+    
+    </script>
+</html>
+
+
